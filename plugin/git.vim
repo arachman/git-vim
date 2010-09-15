@@ -31,6 +31,7 @@ if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gA :GitAdd <cfile><Enter>
     nnoremap <Leader>gc :GitCommit<Enter>
     nnoremap <Leader>gp :GitPullRebase<Enter>
+    nnoremap <Leader>gg :GitGrep 
 endif
 
 " Ensure b:git_dir exists.
@@ -194,8 +195,13 @@ endfunction
 " use git-grep
 function! GitGrep(args)
   setlocal grepprg=git\ grep\ -n\ $*
-  execute "grep" a:args 
+  if len(a:args) == 0
+    execute "grep" expand('<cfile>')
+  else
+    execute "grep" a:args 
+  endif
 endfunction
+
 
 function! GitSvnRebase()
     let git_output = s:SystemGit('svn rebase')
@@ -368,7 +374,7 @@ command!          GitVimDiffMergeDone call GitVimDiffMergeDone()
 command! -nargs=* GitPull             call GitPull(<q-args>)
 command!          GitPullRebase       call GitPull('--rebase')
 command! -nargs=* GitPush             call GitPush(<q-args>)
-command! -nargs=+ GitGrep             call GitGrep(<q-args>)
+command! -nargs=* GitGrep             call GitGrep(<q-args>)
 command!          GitSvnRebase        call GitSvnRebase()
 command!          GitSvnDcommit       call GitSvnDcommit()
 
